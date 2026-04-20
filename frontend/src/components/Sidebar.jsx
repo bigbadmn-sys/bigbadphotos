@@ -18,10 +18,7 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="px-4 lg:px-6 py-8 flex items-center justify-center lg:justify-start gap-3">
         <span className="material-symbols-outlined text-primary-container" style={{ fontSize: '22px' }}>lens_blur</span>
-        <div className="hidden lg:block">
-          <h1 className="text-base font-black text-primary-container tracking-tighter">BIGBADPHOTOS</h1>
-          <p className="text-[11px] font-semibold tracking-[0.1em] uppercase text-on-surface-variant/50 mt-0.5">OBSIDIAN LENS V1.0</p>
-        </div>
+        <h1 className="hidden lg:block text-base font-black text-primary-container tracking-tighter">BIGBADPHOTOS</h1>
       </div>
 
       {/* Nav */}
