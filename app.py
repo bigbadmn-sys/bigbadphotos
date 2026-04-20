@@ -23,7 +23,7 @@ def check_auth():
     return auth is not None and auth.password == BBP_PASSWORD
 
 
-API_ROUTES = {'/health', '/analyze', '/rank'}
+API_ROUTES = {'/analyze', '/rank'}
 
 @app.before_request
 def enforce_auth():

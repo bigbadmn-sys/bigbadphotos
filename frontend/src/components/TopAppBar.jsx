@@ -12,14 +12,14 @@ export default function TopAppBar() {
     ? 'ANALYZING…'
     : photoCount > 0
       ? `STABLE // ${photoCount.toLocaleString()} ${rawCount > 0 ? 'RAW' : 'IMG'} ASSETS`
-      : 'AWAITING SOURCE'
+      : 'AWAITING SOURCE FOLDER'
 
   return (
     <header className="hidden md:flex justify-between items-center w-full px-8 h-16 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/10 sticky top-0 z-40 shrink-0">
 
       {/* Left: app name */}
       <div className="flex items-center gap-8">
-        <span className="text-lg font-black tracking-tighter text-primary-container uppercase">BIGBADPHOTOS</span>
+        <span className="hidden lg:block text-lg font-black tracking-tighter text-primary-container uppercase">BIGBADPHOTOS</span>
       </div>
 
       {/* Right: workspace status + actions */}

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '../store'
 import { createDisplayUrl } from '../utils/imageResize'
@@ -41,7 +41,21 @@ export default function LandingView() {
 
   const [error, setError]         = useState(null)
   const [iosLoading, setIosLoading] = useState(false)
+  const [showStatus, setShowStatus] = useState(false)
+  const [health, setHealth]         = useState(null)
   const fileInputRef = useRef(null)
+
+  useEffect(() => {
+    const check = async () => {
+      try {
+        const res = await fetch('/health', { signal: AbortSignal.timeout(4000) })
+        setHealth(res.ok)
+      } catch { setHealth(false) }
+    }
+    check()
+    const id = setInterval(check, 30000)
+    return () => clearInterval(id)
+  }, [])
 
   // ── Derived state ────────────────────────────────────────────────────────────
   const photoCount  = order.length
@@ -118,9 +132,9 @@ export default function LandingView() {
   const mobileLayout = (
     <div className="md:hidden flex flex-col h-full bg-surface">
 
-      {/* Top bar — only shown after source is selected */}
-      {sourceDir && (
-        <header className="flex items-center justify-between px-4 h-14 bg-surface shrink-0 z-10">
+      {/* Top bar — cog always visible; title/back only after source selected */}
+      <header className="flex items-center justify-between px-4 h-14 bg-surface shrink-0 z-10">
+        {sourceDir ? (
           <div className="flex items-center gap-3">
             <button className="p-2 hover:bg-surface-container-highest transition-colors active:scale-95">
               <span className="material-symbols-outlined text-primary" style={{ fontSize: '22px' }}>arrow_back</span>
@@ -129,10 +143,50 @@ export default function LandingView() {
               REVIEW &amp; EXPORT
             </h1>
           </div>
-          <button className="p-2 hover:bg-surface-container-highest transition-colors active:scale-95">
-            <span className="material-symbols-outlined text-primary" style={{ fontSize: '22px' }}>settings</span>
-          </button>
-        </header>
+        ) : <div />}
+        <button
+          onClick={() => setShowStatus(true)}
+          className="p-2 hover:bg-surface-container-highest transition-colors active:scale-95"
+        >
+          <span
+            className="material-symbols-outlined"
+            style={{ fontSize: '22px', color: health === null ? '#9ccee2' : health ? '#00d1ff' : '#ffb4ab' }}
+          >
+            settings
+          </span>
+        </button>
+      </header>
+
+      {/* System status modal */}
+      {showStatus && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center" onClick={() => setShowStatus(false)}>
+          <div
+            className="w-full bg-surface-container-lowest border-t border-outline-variant/20 p-6 space-y-4"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-black uppercase tracking-widest text-on-surface-variant">SYSTEM STATUS</span>
+              <button onClick={() => setShowStatus(false)}>
+                <span className="material-symbols-outlined text-on-surface-variant/60" style={{ fontSize: '20px' }}>close</span>
+              </button>
+            </div>
+            <div className="flex items-center gap-3">
+              <span
+                className="inline-block w-2 h-2 rounded-full"
+                style={{ background: health === null ? '#9ccee2' : health ? '#00d1ff' : '#ffb4ab' }}
+              />
+              <span
+                className="text-sm font-bold tracking-widest uppercase"
+                style={{ color: health === null ? '#9ccee2' : health ? '#00d1ff' : '#ffb4ab' }}
+              >
+                {health === null ? 'CHECKING…' : health ? 'ONLINE' : 'OFFLINE'}
+              </span>
+            </div>
+            <p className="text-[10px] text-on-surface-variant/40 tracking-widest uppercase">
+              BIGBADPHOTOS · SCORING ENGINE
+            </p>
+          </div>
+        </div>
       )}
 
       {/* Hero */}
@@ -178,9 +232,9 @@ export default function LandingView() {
           className="group w-full flex items-center justify-between p-5 bg-surface-container hover:bg-surface-container-highest transition-all duration-200 border-l-2 border-primary-container"
         >
           <div className="flex flex-col items-start text-left">
-            <span className="text-[10px] font-bold text-secondary uppercase tracking-widest mb-1">Source Path</span>
+            <span className="text-[10px] font-bold text-secondary uppercase tracking-widest mb-1">SELECT AN IMAGE SOURCE FOLDER</span>
             <span className={`text-sm font-semibold truncate max-w-[220px] ${sourceSelected ? 'text-primary-container' : 'text-on-surface-variant/50'}`}>
-              {sourceName ?? 'SELECT SOURCE'}
+              {sourceName ?? 'IMAGE SOURCE DIRECTORY'}
             </span>
           </div>
           <span className="material-symbols-outlined text-primary-container group-hover:translate-x-1 transition-transform" style={{ fontSize: '22px' }}>
@@ -195,9 +249,9 @@ export default function LandingView() {
           className={`group w-full flex items-center justify-between p-5 bg-surface-container transition-all duration-200 border-l-2 border-secondary ${HAS_DIR_PICKER ? 'hover:bg-surface-container-highest cursor-pointer' : 'cursor-default'}`}
         >
           <div className="flex flex-col items-start text-left">
-            <span className="text-[10px] font-bold text-secondary uppercase tracking-widest mb-1">Export Target</span>
+            <span className="text-[10px] font-bold text-secondary uppercase tracking-widest mb-1">SELECT AN IMAGE EXPORT FOLDER</span>
             <span className={`text-sm font-semibold truncate max-w-[220px] ${destSelected ? 'text-secondary' : 'text-on-surface-variant/50'}`}>
-              {destName ?? (HAS_DIR_PICKER ? 'SELECT EXPORT TARGET' : 'IOS SHARE SHEET ON EXPORT')}
+              {destName ?? (HAS_DIR_PICKER ? 'SELECT EXPORT FOLDER' : 'IOS SHARE SHEET ON EXPORT')}
             </span>
           </div>
           <span className="material-symbols-outlined text-secondary group-hover:translate-x-1 transition-transform" style={{ fontSize: '22px' }}>
@@ -253,6 +307,12 @@ export default function LandingView() {
           )}
         </button>
 
+        {!canBegin && !iosLoading && (
+          <p className="text-center text-[10px] text-secondary/40 uppercase tracking-widest leading-relaxed pt-2">
+            SELECT AN IMAGE SOURCE FOLDER AND AN IMAGE EXPORT FOLDER THEN BEGIN REVIEW
+          </p>
+        )}
+
         <div className="h-4" />
       </section>
 
@@ -267,10 +327,6 @@ export default function LandingView() {
   // ═══════════════════════════════════════════════════════════════════════════
   const sharedControls = (
     <div className="flex flex-col gap-5">
-      <div>
-        <h2 className="text-2xl font-extrabold tracking-tight text-on-surface uppercase">SESSION CONFIGURATION</h2>
-        <p className="text-sm text-secondary/60 font-medium mt-1">Verify volumes and production targets</p>
-      </div>
 
       {/* Source card */}
       <button
@@ -279,14 +335,14 @@ export default function LandingView() {
         className="group w-full bg-surface-container-high border-l-2 border-primary-container p-5 text-left hover:bg-surface-container-highest transition-all"
       >
         <div className="flex items-center justify-between mb-3">
-          <span className="text-[11px] font-black uppercase tracking-widest text-primary-container">SOURCE_DIRECTORY</span>
+          <span className="text-[11px] font-black uppercase tracking-widest text-primary-container">SELECT AN IMAGE SOURCE FOLDER</span>
           {sourceSelected
             ? <span className="material-symbols-outlined text-primary-container" style={{ fontSize: '18px', fontVariationSettings: "'FILL' 1" }}>check_circle</span>
             : <span className="material-symbols-outlined text-primary-container" style={{ fontSize: '18px' }}>folder_open</span>
           }
         </div>
         <div className={`bg-surface-container-lowest px-3 py-2 font-mono text-xs break-all ${sourceName ? 'text-secondary' : 'text-on-surface-variant/40'}`}>
-          {sourceName ?? 'SELECT SOURCE'}
+          {sourceName ?? 'IMAGE SOURCE DIRECTORY'}
         </div>
         {firstPhoto && (
           <div className="flex items-center gap-2 pt-3 border-t border-outline-variant/10 mt-3">
@@ -303,13 +359,13 @@ export default function LandingView() {
         className={`group w-full bg-surface-container border-l-2 border-outline-variant p-5 text-left transition-all ${HAS_DIR_PICKER ? 'hover:bg-surface-container-high cursor-pointer' : 'cursor-default'}`}
       >
         <div className="flex items-center justify-between mb-3">
-          <span className="text-[11px] font-black uppercase tracking-widest text-on-surface-variant">EXPORT_TARGET</span>
+          <span className="text-[11px] font-black uppercase tracking-widest text-on-surface-variant">SELECT AN IMAGE EXPORT FOLDER</span>
           <span className="material-symbols-outlined text-on-surface-variant" style={{ fontSize: '18px' }}>
             {destSelected ? 'check_circle' : 'edit_note'}
           </span>
         </div>
         <div className={`bg-surface-container-lowest px-3 py-2 font-mono text-xs break-all ${destName ? 'text-secondary/70' : 'text-on-surface-variant/40'}`}>
-          {destName ?? (HAS_DIR_PICKER ? 'SELECT EXPORT TARGET' : 'IOS SHARE SHEET ON EXPORT')}
+          {destName ?? (HAS_DIR_PICKER ? 'SELECT EXPORT FOLDER' : 'IOS SHARE SHEET ON EXPORT')}
         </div>
       </button>
 
@@ -355,8 +411,8 @@ export default function LandingView() {
           )}
         </button>
         {!canBegin && !iosLoading && (
-          <p className="text-center mt-3 text-[10px] text-secondary/40 uppercase tracking-widest">
-            Select a source directory to begin
+          <p className="text-center mt-3 text-[10px] text-secondary/40 uppercase tracking-widest leading-relaxed">
+            SELECT AN IMAGE SOURCE FOLDER AND AN IMAGE EXPORT FOLDER THEN BEGIN REVIEW
           </p>
         )}
       </div>
@@ -444,7 +500,7 @@ export default function LandingView() {
           label="SCORING_PROGRESS"
           value={scoreTotal > 0 ? `${scorePct}%` : photoCount > 0 ? '100%' : '—'}
           unit="SCORED"
-          sub={isScoring ? `${scoredCount} OF ${scoreTotal} ANALYZED` : photoCount > 0 ? 'ANALYSIS COMPLETE' : 'AWAITING SOURCE'}
+          sub={isScoring ? `${scoredCount} OF ${scoreTotal} ANALYZED` : photoCount > 0 ? 'ANALYSIS COMPLETE' : 'AWAITING SOURCE FOLDER'}
           subColor={isScoring ? 'text-primary' : 'text-on-surface-variant/40'}
         />
         <StatCard
@@ -459,10 +515,10 @@ export default function LandingView() {
           subColor="text-on-surface-variant/40"
         />
         <StatCard
-          label="SCORING_PROGRESS"
+          label="WORKSPACE_LOAD"
           value={scoredCount > 0 ? scoredCount.toLocaleString() : '—'}
           unit={photoCount > 0 ? `OF ${photoCount.toLocaleString()} IMAGES` : undefined}
-          sub={canBegin ? (scoreTotal > 0 ? `${scorePct}% ANALYZED` : 'READY TO REVIEW') : 'SELECT SOURCE TO BEGIN'}
+          sub={canBegin ? (scoreTotal > 0 ? `${scorePct}% ANALYZED` : 'READY TO REVIEW') : 'SELECT SOURCE FOLDER TO BEGIN'}
           subColor={canBegin ? 'text-primary' : 'text-on-surface-variant/40'}
         />
       </div>
