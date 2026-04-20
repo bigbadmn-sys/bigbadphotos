@@ -89,16 +89,16 @@ export default function LandingView() {
         })
         .sort((a, b) => a.name.localeCompare(b.name))
 
-      const loaded = await Promise.all(eligible.map(async (file) => {
-        const ext  = file.name.split('.').pop().toLowerCase()
+      const settled = await Promise.all(eligible.map(async (file) => {
+        const ext   = file.name.split('.').pop().toLowerCase()
         const isWeb = WEB_FORMATS.has(ext)
-        return {
-          id: file.name, filename: file.name,
-          url: isWeb ? await createDisplayUrl(file) : null,
-          file, isRaw: !isWeb,
-          decision: null, rank: null, sharpness: null,
+        let url = null
+        if (isWeb) {
+          try { url = await createDisplayUrl(file) } catch { url = null }
         }
+        return { id: file.name, filename: file.name, url, file, isRaw: !isWeb, decision: null, rank: null, sharpness: null }
       }))
+      const loaded = settled.filter(Boolean)
 
       addPhotos(loaded)
       setSourceDir({ name: `ios-${eligible.length}-photos`, _ios: true })

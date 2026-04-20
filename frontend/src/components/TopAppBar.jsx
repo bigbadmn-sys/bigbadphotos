@@ -12,7 +12,7 @@ export default function TopAppBar() {
   const location = useLocation()
 
   return (
-    <header className="h-16 shrink-0 bg-surface border-b border-outline-variant/20 flex items-center justify-between px-6 z-10">
+    <header className="hidden md:flex h-16 shrink-0 bg-surface border-b border-outline-variant/20 items-center justify-between px-6 z-10">
       <div className="flex items-center gap-2">
         <div className="w-6 h-6 rounded-full border border-primary/60 flex items-center justify-center">
           <div className="w-2 h-2 rounded-full bg-primary" />
