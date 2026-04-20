@@ -63,10 +63,8 @@ export default function LandingView() {
 
   const sourceName = sourceDir
     ? (sourceDir._ios ? `${photoCount} photos loaded` : sourceDir.name)
-    : '/Volumes/SD_PRO/2023_SHOOTS'
-  const destName = destDir
-    ? destDir.name
-    : HAS_DIR_PICKER ? '/Users/BigBadPhotos/Final_Edits' : 'iOS Share Sheet on export'
+    : null
+  const destName = destDir ? destDir.name : null
 
   const sourceSelected = !!sourceDir
   const destSelected   = !!destDir
@@ -177,8 +175,8 @@ export default function LandingView() {
         >
           <div className="flex flex-col items-start text-left">
             <span className="text-[10px] font-bold text-secondary uppercase tracking-widest mb-1">Source Path</span>
-            <span className={`text-sm font-semibold truncate max-w-[220px] ${sourceSelected ? 'text-primary-container' : 'text-on-surface'}`}>
-              {sourceName}
+            <span className={`text-sm font-semibold truncate max-w-[220px] ${sourceSelected ? 'text-primary-container' : 'text-on-surface-variant/50'}`}>
+              {sourceName ?? 'SELECT SOURCE'}
             </span>
           </div>
           <span className="material-symbols-outlined text-primary-container group-hover:translate-x-1 transition-transform" style={{ fontSize: '22px' }}>
@@ -194,8 +192,8 @@ export default function LandingView() {
         >
           <div className="flex flex-col items-start text-left">
             <span className="text-[10px] font-bold text-secondary uppercase tracking-widest mb-1">Export Target</span>
-            <span className={`text-sm font-semibold truncate max-w-[220px] ${destSelected ? 'text-secondary' : 'text-on-surface'}`}>
-              {destName}
+            <span className={`text-sm font-semibold truncate max-w-[220px] ${destSelected ? 'text-secondary' : 'text-on-surface-variant/50'}`}>
+              {destName ?? (HAS_DIR_PICKER ? 'SELECT EXPORT TARGET' : 'IOS SHARE SHEET ON EXPORT')}
             </span>
           </div>
           <span className="material-symbols-outlined text-secondary group-hover:translate-x-1 transition-transform" style={{ fontSize: '22px' }}>
@@ -283,8 +281,8 @@ export default function LandingView() {
             : <span className="material-symbols-outlined text-primary-container" style={{ fontSize: '18px' }}>folder_open</span>
           }
         </div>
-        <div className="bg-surface-container-lowest px-3 py-2 font-mono text-xs text-secondary break-all">
-          {sourceName}
+        <div className={`bg-surface-container-lowest px-3 py-2 font-mono text-xs break-all ${sourceName ? 'text-secondary' : 'text-on-surface-variant/40'}`}>
+          {sourceName ?? 'SELECT SOURCE'}
         </div>
         {firstPhoto && (
           <div className="flex items-center gap-2 pt-3 border-t border-outline-variant/10 mt-3">
@@ -306,8 +304,8 @@ export default function LandingView() {
             {destSelected ? 'check_circle' : 'edit_note'}
           </span>
         </div>
-        <div className="bg-surface-container-lowest px-3 py-2 font-mono text-xs text-secondary/70 break-all">
-          {destName}
+        <div className={`bg-surface-container-lowest px-3 py-2 font-mono text-xs break-all ${destName ? 'text-secondary/70' : 'text-on-surface-variant/40'}`}>
+          {destName ?? (HAS_DIR_PICKER ? 'SELECT EXPORT TARGET' : 'IOS SHARE SHEET ON EXPORT')}
         </div>
       </button>
 
