@@ -1,44 +1,85 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 
 const navItems = [
-  { label: 'LIBRARY', route: '/', icon: 'grid_view' },
-  { label: 'CULL', route: '/cull', icon: 'collections' },
-  { label: 'COMPARE', route: '/compare', icon: 'compare' },
-  { label: 'EXPORT', route: '/review', icon: 'ios_share' },
+  { label: 'Library',    route: '/',        icon: 'grid_view' },
+  { label: 'Cull',       route: '/cull',     icon: 'collections' },
+  { label: 'Compare',    route: '/compare',  icon: 'compare' },
+  { label: 'Export',     route: '/review',   icon: 'ios_share' },
+  { label: 'Preferences',route: null,        icon: 'tune' },
 ]
 
 export default function Sidebar() {
-  const navigate = useNavigate()
-  const location = useLocation()
+  const navigate  = useNavigate()
+  const location  = useLocation()
 
   return (
-    <aside className="hidden md:flex w-48 flex-col shrink-0 bg-surface-container-low border-r border-outline-variant/20">
-      <div className="px-6 pt-6 pb-6">
-        <h2 className="font-display font-bold text-primary tracking-widest text-sm">BIGBADPHOTOS</h2>
-        <p className="text-on-surface-variant text-xs mt-1 tracking-wider">PRO OPERATOR</p>
+    <aside className="hidden md:flex flex-col shrink-0 bg-surface-container-lowest border-r border-white/5 z-50 w-24 lg:w-64">
+
+      {/* Logo */}
+      <div className="px-4 lg:px-6 py-8 flex items-center justify-center lg:justify-start gap-3">
+        <span className="material-symbols-outlined text-primary-container" style={{ fontSize: '22px' }}>lens_blur</span>
+        <div className="hidden lg:block">
+          <h1 className="text-base font-black text-primary-container tracking-tighter">BIGBADPHOTOS</h1>
+          <p className="text-[11px] font-semibold tracking-[0.1em] uppercase text-on-surface-variant/50 mt-0.5">OBSIDIAN LENS V1.0</p>
+        </div>
       </div>
 
-      <nav className="flex flex-col gap-0.5 px-2 flex-1">
+      {/* Nav */}
+      <nav className="flex flex-col flex-1 mt-2">
         {navItems.map(item => {
-          const active = location.pathname === item.route
+          const active = item.route && location.pathname === item.route
           return (
             <button
               key={item.label}
-              onClick={() => navigate(item.route)}
-              className={`flex items-center gap-3 px-4 py-3 text-xs font-medium tracking-widest transition-colors text-left relative ${
+              onClick={() => item.route && navigate(item.route)}
+              className={`flex flex-col lg:flex-row items-center gap-1 lg:gap-4 py-4 px-4 lg:px-6 min-h-[56px] transition-all text-[11px] font-bold uppercase tracking-widest ${
                 active
-                  ? 'text-primary bg-primary/10 border-l-2 border-primary'
-                  : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container border-l-2 border-transparent'
-              }`}
+                  ? 'bg-surface-container text-primary-container border-l-2 border-primary-container'
+                  : 'text-secondary/50 hover:text-on-surface hover:bg-surface-container border-l-2 border-transparent'
+              } ${!item.route ? 'cursor-default' : 'cursor-pointer'}`}
             >
-              <span className={`material-symbols-outlined text-xl leading-none ${active ? 'fill-icon' : ''}`}>
+              <span
+                className="material-symbols-outlined"
+                style={{
+                  fontSize: '22px',
+                  fontVariationSettings: active ? "'FILL' 1, 'wght' 300" : "'FILL' 0, 'wght' 300",
+                }}
+              >
                 {item.icon}
               </span>
-              {item.label}
+              <span className="hidden lg:block">{item.label}</span>
             </button>
           )
         })}
       </nav>
+
+      {/* NEW IMPORT button */}
+      <div className="px-4 lg:px-6 mb-6">
+        <button
+          onClick={() => navigate('/')}
+          className="w-full bg-primary-container text-on-primary py-3 font-bold text-[11px] tracking-widest uppercase hover:brightness-110 transition-all active:scale-[0.98] hidden lg:flex items-center justify-center"
+        >
+          NEW IMPORT
+        </button>
+        <button
+          onClick={() => navigate('/')}
+          className="lg:hidden w-full flex items-center justify-center py-3 bg-primary-container text-on-primary hover:brightness-110 transition-all active:scale-[0.98]"
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>add</span>
+        </button>
+      </div>
+
+      {/* Footer */}
+      <div className="border-t border-white/5 pb-4">
+        <button className="w-full flex flex-col lg:flex-row items-center gap-1 lg:gap-3 py-3 px-4 lg:px-6 text-on-surface-variant/40 hover:text-on-surface transition-all text-[10px] tracking-widest uppercase">
+          <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>help_outline</span>
+          <span className="hidden lg:block">Support</span>
+        </button>
+        <button className="w-full flex flex-col lg:flex-row items-center gap-1 lg:gap-3 py-3 px-4 lg:px-6 text-on-surface-variant/40 hover:text-on-surface transition-all text-[10px] tracking-widest uppercase">
+          <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>sensors</span>
+          <span className="hidden lg:block">System Status</span>
+        </button>
+      </div>
     </aside>
   )
 }
