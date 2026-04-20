@@ -12,14 +12,13 @@ COPY frontend/ ./
 RUN npm run build
 
 # ── Stage 2: Python runtime with built frontend ───────────────────────────────
-FROM python:3.11-alpine
+FROM python:3.11-slim
 
 # Install system dependencies required by opencv-python-headless
-RUN apk add --no-cache \
-    libstdc++ \
-    libgomp \
-    glib \
-    && rm -rf /var/cache/apk/*
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgl1 \
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
