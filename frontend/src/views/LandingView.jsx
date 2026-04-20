@@ -57,9 +57,9 @@ export default function LandingView() {
   const scoredCount = scoringProgress.done
   const scoreTotal  = scoringProgress.total
   const scorePct    = scoreTotal > 0 ? Math.round((scoredCount / scoreTotal) * 100) : 0
-  const workspaceLabel = isScoring
-    ? `${scorePct}% SCORED`
-    : photoCount > 0 ? 'READY' : '65% OPTIMIZED'
+  const scoringLabel = photoCount > 0
+    ? `${scoredCount.toLocaleString()} of ${photoCount.toLocaleString()} images`
+    : '0 of 0 images'
 
   const sourceName = sourceDir
     ? (sourceDir._ios ? `${photoCount} photos loaded` : sourceDir.name)
@@ -211,14 +211,14 @@ export default function LandingView() {
             </p>
           </div>
           <div className="bg-surface-container-highest p-4 flex flex-col items-end">
-            <p className="text-[10px] font-bold text-secondary uppercase tracking-widest mb-2">Workspace Load</p>
+            <p className="text-[10px] font-bold text-secondary uppercase tracking-widest mb-2">Scoring Progress</p>
             <div className="w-24 h-1 bg-surface-container-low">
               <div
                 className="h-full bg-primary-container transition-all duration-500"
-                style={{ width: `${photoCount > 0 ? Math.max(10, scorePct || 65) : 65}%` }}
+                style={{ width: `${scoreTotal > 0 ? scorePct : 0}%` }}
               />
             </div>
-            <p className="text-[10px] font-bold text-on-surface mt-1">{workspaceLabel}</p>
+            <p className="text-[10px] font-bold text-on-surface mt-1">{scoringLabel}</p>
           </div>
         </div>
 
@@ -455,10 +455,10 @@ export default function LandingView() {
           subColor="text-on-surface-variant/40"
         />
         <StatCard
-          label="WORKSPACE_LOAD"
-          value={photoCount > 0 ? `${Math.max(10, scorePct || 65)}%` : '—'}
-          unit="OPTIMIZED"
-          sub={canBegin ? 'READY TO REVIEW' : 'SELECT SOURCE TO BEGIN'}
+          label="SCORING_PROGRESS"
+          value={scoredCount > 0 ? scoredCount.toLocaleString() : '—'}
+          unit={photoCount > 0 ? `OF ${photoCount.toLocaleString()} IMAGES` : undefined}
+          sub={canBegin ? (scoreTotal > 0 ? `${scorePct}% ANALYZED` : 'READY TO REVIEW') : 'SELECT SOURCE TO BEGIN'}
           subColor={canBegin ? 'text-primary' : 'text-on-surface-variant/40'}
         />
       </div>
