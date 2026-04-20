@@ -1,3 +1,6 @@
-[providers]
-python = {}
-node = {}
+[options]
+providers = ["python", "node"]
+
+[packages]
+nodejs = "20"
+python = "3.11"
