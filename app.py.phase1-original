@@ -1,0 +1,93 @@
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import cv2
+import numpy as np
+from scipy.ndimage import laplace
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+app = Flask(__name__)
+CORS(app)
+
+def calculate_sharpness(image_path):
+    """Calculate sharpness using Laplacian variance method"""
+    try:
+        img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+        if img is None:
+            return 0.0
+        
+        laplacian = cv2.Laplacian(img, cv2.CV_64F)
+        sharpness = laplacian.var()
+        
+        normalized_sharpness = min(sharpness / 500.0, 1.0)
+        return float(normalized_sharpness)
+    except Exception as e:
+        print(f"Error calculating sharpness: {e}")
+        return 0.0
+
+@app.route('/health', methods=['GET'])
+def health():
+    return jsonify({
+        'status': 'ok',
+        'engine': 'Python-based image analysis',
+        'features': ['sharpness_detection']
+    })
+
+@app.route('/analyze', methods=['POST'])
+def analyze():
+    """Analyze single image"""
+    try:
+        data = request.json
+        image_path = data.get('image_path')
+        
+        if not image_path or not os.path.exists(image_path):
+            return jsonify({'error': 'Invalid image path'}), 400
+        
+        sharpness = calculate_sharpness(image_path)
+        
+        return jsonify({
+            'image_path': image_path,
+            'sharpness': sharpness,
+            'quality_score': sharpness,
+            'faces_detected': 0,
+            'status': 'analyzed'
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/rank', methods=['POST'])
+def rank():
+    """Rank multiple images by sharpness"""
+    try:
+        data = request.json
+        image_paths = data.get('image_paths', [])
+        
+        if not image_paths:
+            return jsonify({'error': 'No images provided'}), 400
+        
+        results = []
+        for image_path in image_paths:
+            if os.path.exists(image_path):
+                sharpness = calculate_sharpness(image_path)
+                results.append({
+                    'image_path': image_path,
+                    'sharpness': sharpness,
+                    'quality_score': sharpness,
+                    'filename': os.path.basename(image_path)
+                })
+        
+        results.sort(key=lambda x: x['sharpness'], reverse=True)
+        
+        return jsonify({
+            'total_images': len(image_paths),
+            'analyzed': len(results),
+            'results': results
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+if __name__ == '__main__':
+    print('Starting BigBadPhotos backend on http://localhost:5000')
+    app.run(debug=False, host='0.0.0.0', port=8000)
