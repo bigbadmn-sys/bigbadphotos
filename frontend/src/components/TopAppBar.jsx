@@ -3,7 +3,6 @@ import { useStore } from '../store'
 
 export default function TopAppBar() {
   const navigate  = useNavigate()
-  const location  = useLocation()
   const photos    = useStore(s => s.photos)
   const isScoring = useStore(s => s.isScoring)
   const photoCount  = Object.keys(photos).length
