@@ -17,10 +17,7 @@ export default function TopAppBar() {
   return (
     <header className="hidden md:flex justify-between items-center w-full px-8 h-16 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/10 sticky top-0 z-40 shrink-0">
 
-      {/* Left: app name */}
-      <div className="flex items-center gap-8">
-        <span className="hidden lg:block text-lg font-black tracking-tighter text-primary-container uppercase">BIGBADPHOTOS</span>
-      </div>
+      <div />
 
       {/* Right: workspace status + actions */}
       <div className="flex items-center gap-6">
