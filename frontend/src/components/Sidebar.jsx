@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 const navItems = [
@@ -11,6 +12,21 @@ const navItems = [
 export default function Sidebar() {
   const navigate  = useNavigate()
   const location  = useLocation()
+  const [health, setHealth] = useState(null) // null=loading, true=ok, false=error
+
+  useEffect(() => {
+    const check = async () => {
+      try {
+        const res = await fetch('/health', { signal: AbortSignal.timeout(4000) })
+        setHealth(res.ok)
+      } catch {
+        setHealth(false)
+      }
+    }
+    check()
+    const id = setInterval(check, 30000)
+    return () => clearInterval(id)
+  }, [])
 
   return (
     <aside className="hidden md:flex flex-col shrink-0 bg-surface-container-lowest border-r border-white/5 z-50 w-24 lg:w-64">
@@ -68,14 +84,26 @@ export default function Sidebar() {
 
       {/* Footer */}
       <div className="border-t border-white/5 pb-4">
-        <button className="w-full flex flex-col lg:flex-row items-center gap-1 lg:gap-3 py-3 px-4 lg:px-6 text-on-surface-variant/40 hover:text-on-surface transition-all text-[10px] tracking-widest uppercase">
-          <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>help_outline</span>
-          <span className="hidden lg:block">Support</span>
-        </button>
-        <button className="w-full flex flex-col lg:flex-row items-center gap-1 lg:gap-3 py-3 px-4 lg:px-6 text-on-surface-variant/40 hover:text-on-surface transition-all text-[10px] tracking-widest uppercase">
-          <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>sensors</span>
-          <span className="hidden lg:block">System Status</span>
-        </button>
+        <div className="w-full flex flex-col lg:flex-row items-center gap-1 lg:gap-3 py-3 px-4 lg:px-6 text-[10px] tracking-widest uppercase">
+          <span
+            className="material-symbols-outlined"
+            style={{
+              fontSize: '18px',
+              color: health === null ? '#9ccee2' : health ? '#00d1ff' : '#ffb4ab',
+            }}
+          >
+            sensors
+          </span>
+          <span className="hidden lg:flex items-center gap-2">
+            <span
+              className="inline-block w-1.5 h-1.5 rounded-full"
+              style={{ background: health === null ? '#9ccee2' : health ? '#00d1ff' : '#ffb4ab' }}
+            />
+            <span style={{ color: health === null ? '#9ccee2' : health ? '#00d1ff' : '#ffb4ab' }}>
+              {health === null ? 'CHECKING…' : health ? 'ONLINE' : 'OFFLINE'}
+            </span>
+          </span>
+        </div>
       </div>
     </aside>
   )

@@ -118,20 +118,22 @@ export default function LandingView() {
   const mobileLayout = (
     <div className="md:hidden flex flex-col h-full bg-surface">
 
-      {/* Top bar */}
-      <header className="flex items-center justify-between px-4 h-14 bg-surface shrink-0 z-10">
-        <div className="flex items-center gap-3">
+      {/* Top bar — only shown after source is selected */}
+      {sourceDir && (
+        <header className="flex items-center justify-between px-4 h-14 bg-surface shrink-0 z-10">
+          <div className="flex items-center gap-3">
+            <button className="p-2 hover:bg-surface-container-highest transition-colors active:scale-95">
+              <span className="material-symbols-outlined text-primary" style={{ fontSize: '22px' }}>arrow_back</span>
+            </button>
+            <h1 className="text-base font-black text-primary-container uppercase tracking-tighter">
+              REVIEW &amp; EXPORT
+            </h1>
+          </div>
           <button className="p-2 hover:bg-surface-container-highest transition-colors active:scale-95">
-            <span className="material-symbols-outlined text-primary" style={{ fontSize: '22px' }}>arrow_back</span>
+            <span className="material-symbols-outlined text-primary" style={{ fontSize: '22px' }}>settings</span>
           </button>
-          <h1 className="text-base font-black text-primary-container uppercase tracking-tighter">
-            REVIEW &amp; EXPORT
-          </h1>
-        </div>
-        <button className="p-2 hover:bg-surface-container-highest transition-colors active:scale-95">
-          <span className="material-symbols-outlined text-primary" style={{ fontSize: '22px' }}>settings</span>
-        </button>
-      </header>
+        </header>
+      )}
 
       {/* Hero */}
       <section className="relative w-full bg-surface-container-lowest overflow-hidden shrink-0" style={{ aspectRatio: '4/5' }}>
@@ -142,26 +144,28 @@ export default function LandingView() {
           style={{ filter: firstPhoto ? 'none' : 'grayscale(0.3) brightness(0.75)' }}
         />
         <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to top, #131313 0%, transparent 55%)' }} />
-        <div className="absolute bottom-0 left-0 w-full p-5 flex items-end justify-between">
-          <div>
-            <p className="text-[10px] font-bold tracking-[0.2em] text-secondary uppercase mb-1">CURRENT SELECTION</p>
-            <h2 className="text-xl font-extrabold tracking-tighter text-on-surface uppercase truncate max-w-[200px]">
-              {heroName}
-            </h2>
+        {firstPhoto && (
+          <div className="absolute bottom-0 left-0 w-full p-5 flex items-end justify-between">
+            <div>
+              <p className="text-[10px] font-bold tracking-[0.2em] text-secondary uppercase mb-1">CURRENT SELECTION</p>
+              <h2 className="text-xl font-extrabold tracking-tighter text-on-surface uppercase truncate max-w-[200px]">
+                {heroName}
+              </h2>
+            </div>
+            <div className="text-right shrink-0">
+              {firstPhoto.overallScore != null && (
+                <span className="block text-[10px] font-bold text-primary-container uppercase tracking-widest">
+                  SCORE {Math.round(firstPhoto.overallScore * 100)}
+                </span>
+              )}
+              {firstPhoto.exposure?.exposure_score != null && (
+                <span className="block text-[10px] font-bold text-secondary uppercase tracking-widest">
+                  EXP {Math.round(firstPhoto.exposure.exposure_score * 100)}%
+                </span>
+              )}
+            </div>
           </div>
-          <div className="text-right shrink-0">
-            {firstPhoto?.overallScore != null && (
-              <span className="block text-[10px] font-bold text-primary-container uppercase tracking-widest">
-                SCORE {Math.round(firstPhoto.overallScore * 100)}
-              </span>
-            )}
-            {firstPhoto?.exposure?.exposure_score != null && (
-              <span className="block text-[10px] font-bold text-secondary uppercase tracking-widest">
-                EXP {Math.round(firstPhoto.exposure.exposure_score * 100)}%
-              </span>
-            )}
-          </div>
-        </div>
+        )}
       </section>
 
       {/* Controls */}
@@ -383,41 +387,41 @@ export default function LandingView() {
             />
             <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(180deg, rgba(19,19,19,0) 40%, rgba(19,19,19,0.92) 100%)' }} />
 
-            {/* Hero overlay */}
+            {/* Hero overlay — only shown after source is selected */}
+            {firstPhoto && (
             <div className="absolute bottom-0 left-0 p-8 w-full flex justify-between items-end">
               <div>
                 <div className="flex items-center gap-3 mb-1">
                   <span className="px-2 py-1 bg-primary-container text-on-primary text-[10px] font-black tracking-tighter uppercase">
-                    {firstPhoto ? 'CURRENT ASSET' : 'LATEST INGEST'}
+                    CURRENT ASSET
                   </span>
                   <span className="text-on-surface-variant text-[10px] font-mono tracking-tighter uppercase">
-                    {firstPhoto ? firstPhoto.filename : 'IMPERIAL_EAGLE_RAW_01'}
+                    {firstPhoto.filename}
                   </span>
                 </div>
               </div>
-              {firstPhoto && (
-                <div className="flex gap-5">
-                  {firstPhoto.sharpness != null && (
-                    <div className="flex flex-col items-end">
-                      <span className="text-[10px] text-on-surface-variant/60 font-bold uppercase">SHARP</span>
-                      <span className="text-secondary font-mono text-sm">{Math.round(firstPhoto.sharpness * 100)}</span>
-                    </div>
-                  )}
-                  {firstPhoto.overallScore != null && (
-                    <div className="flex flex-col items-end">
-                      <span className="text-[10px] text-on-surface-variant/60 font-bold uppercase">SCORE</span>
-                      <span className="text-secondary font-mono text-sm">{Math.round(firstPhoto.overallScore * 100)}</span>
-                    </div>
-                  )}
-                  {firstPhoto.exposure?.exposure_score != null && (
-                    <div className="flex flex-col items-end">
-                      <span className="text-[10px] text-on-surface-variant/60 font-bold uppercase">EXP</span>
-                      <span className="text-secondary font-mono text-sm">{Math.round(firstPhoto.exposure.exposure_score * 100)}%</span>
-                    </div>
-                  )}
-                </div>
-              )}
+              <div className="flex gap-5">
+                {firstPhoto.sharpness != null && (
+                  <div className="flex flex-col items-end">
+                    <span className="text-[10px] text-on-surface-variant/60 font-bold uppercase">SHARP</span>
+                    <span className="text-secondary font-mono text-sm">{Math.round(firstPhoto.sharpness * 100)}</span>
+                  </div>
+                )}
+                {firstPhoto.overallScore != null && (
+                  <div className="flex flex-col items-end">
+                    <span className="text-[10px] text-on-surface-variant/60 font-bold uppercase">SCORE</span>
+                    <span className="text-secondary font-mono text-sm">{Math.round(firstPhoto.overallScore * 100)}</span>
+                  </div>
+                )}
+                {firstPhoto.exposure?.exposure_score != null && (
+                  <div className="flex flex-col items-end">
+                    <span className="text-[10px] text-on-surface-variant/60 font-bold uppercase">EXP</span>
+                    <span className="text-secondary font-mono text-sm">{Math.round(firstPhoto.exposure.exposure_score * 100)}%</span>
+                  </div>
+                )}
+              </div>
             </div>
+            )}
           </div>
         </section>
 
