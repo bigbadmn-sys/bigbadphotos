@@ -5,7 +5,7 @@ const SESSION_KEY = 'bbp_authed'
 
 function isAuthed() {
   if (!CORRECT) return true  // no password set — gate disabled
-  return sessionStorage.getItem(SESSION_KEY) === CORRECT
+  return localStorage.getItem(SESSION_KEY) === CORRECT
 }
 
 export default function PasswordGate({ children }) {
@@ -18,7 +18,7 @@ export default function PasswordGate({ children }) {
   const submit = (e) => {
     e.preventDefault()
     if (value === CORRECT) {
-      sessionStorage.setItem(SESSION_KEY, CORRECT)
+      localStorage.setItem(SESSION_KEY, CORRECT)
       setAuthed(true)
     } else {
       setError(true)
