@@ -5,6 +5,7 @@ import numpy as np
 import json
 import os
 import time
+import gc
 from typing import Dict, List, Tuple
 
 app = Flask(__name__)
@@ -53,15 +54,21 @@ EYE_CASCADE  = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xm
 # Image decoding
 # ---------------------------------------------------------------------------
 
+MAX_SCORING_DIM = 1500  # px — sufficient for all scoring metrics
+
 def decode_image(img_bytes: bytes) -> Tuple[np.ndarray, np.ndarray]:
     """
-    Decode JPEG/PNG bytes → (BGR, grayscale).
+    Decode JPEG/PNG bytes → (BGR, grayscale), capped at MAX_SCORING_DIM.
     Raises ValueError if decode fails.
     """
     arr = np.frombuffer(img_bytes, dtype=np.uint8)
     bgr = cv2.imdecode(arr, cv2.IMREAD_COLOR)
     if bgr is None:
         raise ValueError("cv2.imdecode returned None — not a valid image")
+    h, w = bgr.shape[:2]
+    if max(h, w) > MAX_SCORING_DIM:
+        scale = MAX_SCORING_DIM / max(h, w)
+        bgr = cv2.resize(bgr, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_AREA)
     gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
     return bgr, gray
 
@@ -394,6 +401,7 @@ def rank():
             try:
                 img_bytes = file_obj.read()
                 _, gray   = decode_image(img_bytes)
+                del img_bytes
 
                 subj = score_faces(gray)
                 raw_results.append({
@@ -407,6 +415,8 @@ def rank():
                     "composition":  score_composition(gray, subj.get("primary_face_box")),
                     "phash":        compute_phash(gray),
                 })
+                del gray
+                gc.collect()
             except Exception as e:
                 return jsonify({"error": "scoring_failed", "id": entry_id,
                                 "filename": filename, "detail": str(e)}), 500
