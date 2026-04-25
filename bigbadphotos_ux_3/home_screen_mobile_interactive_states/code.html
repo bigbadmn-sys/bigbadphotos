@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BIGBADPHOTOS - Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#ffd59c",
+                        "on-primary-container": "#00566a",
+                        "inverse-primary": "#00677f",
+                        "secondary-fixed-dim": "#9ccee2",
+                        "surface-container-low": "#1c1b1b",
+                        "on-surface-variant": "#bbc9cf",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-dim": "#131313",
+                        "surface-container-high": "#2a2a2a",
+                        "surface-container-lowest": "#0e0e0e",
+                        "surface-bright": "#3a3939",
+                        "background": "#131313",
+                        "error": "#ffb4ab",
+                        "on-primary-fixed-variant": "#004e60",
+                        "on-tertiary-container": "#6b4700",
+                        "on-secondary-container": "#8ec0d3",
+                        "outline": "#859399",
+                        "secondary-container": "#184f60",
+                        "on-secondary-fixed-variant": "#154d5d",
+                        "primary-container": "#00d1ff",
+                        "on-secondary-fixed": "#001f28",
+                        "primary-fixed": "#b7eaff",
+                        "tertiary-fixed-dim": "#ffba49",
+                        "secondary": "#9ccee2",
+                        "primary-fixed-dim": "#4cd6ff",
+                        "inverse-on-surface": "#313030",
+                        "surface-container": "#201f1f",
+                        "primary": "#a4e6ff",
+                        "on-secondary": "#003543",
+                        "on-error-container": "#ffdad6",
+                        "on-tertiary": "#442b00",
+                        "outline-variant": "#3c494e",
+                        "surface-variant": "#353534",
+                        "surface-container-highest": "#353534",
+                        "on-error": "#690005",
+                        "on-surface": "#e5e2e1",
+                        "error-container": "#93000a",
+                        "surface-tint": "#4cd6ff",
+                        "secondary-fixed": "#b8eafe",
+                        "on-primary-fixed": "#001f28",
+                        "on-background": "#e5e2e1",
+                        "surface": "#131313",
+                        "on-primary": "#003543",
+                        "tertiary-fixed": "#ffddb1",
+                        "tertiary-container": "#feb127",
+                        "on-tertiary-fixed-variant": "#624000",
+                        "on-tertiary-fixed": "#291800"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Manrope"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; min-height: max(884px, 100dvh); }
+    </style>
+</head>
+<body class="bg-background text-on-surface selection:bg-primary-container selection:text-on-primary">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#131313] flex items-center justify-between px-4 h-16 font-manrope uppercase tracking-tighter">
+<div class="flex items-center gap-4">
+<button class="hover:bg-[#353534] transition-colors active:scale-95 duration-100 p-2">
+<span class="material-symbols-outlined text-[#a4e6ff]" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="text-lg font-bold text-[#00d1ff]">REVIEW &amp; EXPORT</h1>
+</div>
+<button class="hover:bg-[#353534] transition-colors active:scale-95 duration-100 p-2">
+<span class="material-symbols-outlined text-[#a4e6ff]" data-icon="settings">settings</span>
+</button>
+</header>
+<main class="pt-16 pb-24 min-h-screen flex flex-col">
+<!-- Hero Section: The Obsidian Lens Visual -->
+<section class="relative w-full aspect-[4/5] bg-surface-container-lowest overflow-hidden" id="hero-section">
+<!-- Default Image: Eagle Photo -->
+<img alt="Eagle" class="w-full h-full object-cover object-top" id="hero-image" src="https://lh3.googleusercontent.com/aida/ADBb0uhvPGridYGS6yTGT2Ou07xRtftJaRNuWT3uzE9rbEcjkkMkddW0B3-UHBm4_N_uGj1PmhTtlPfVCaqrqZgPZZuR-d8LIXIrxMQYX9FNwGC5wG3utE6ajJUMhsrhwlNg9f52vTlodTny9HAvcW14vYnPnSxMdJXtjpyCXQwevFR6PpZjdq3BxVqxmJ71K-CNJ1_CjnZmDGctH-VnNjhXx4RV8kQreikZgWmmX-FkYvkKuke6tEH7lHieYkbD-BYB-t8xW5atbZkX6w"/>
+<!-- Metadata Overlay -->
+<div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-surface to-transparent">
+<div class="flex items-end justify-between">
+<div>
+<div class="text-[10px] font-bold tracking-[0.2em] text-secondary uppercase mb-1">CURRENT SELECTION</div>
+<h2 class="text-2xl font-extrabold tracking-tighter text-on-surface uppercase" id="hero-filename">Imperial_Eagle_Raw_01</h2>
+</div>
+<div class="text-right">
+<span class="block text-[10px] font-bold text-primary-container uppercase tracking-widest">ISO 100</span>
+<span class="block text-[10px] font-bold text-secondary uppercase tracking-widest">f/2.8 · 1/2000s</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Functional Controls -->
+<section class="flex-grow px-4 py-8 space-y-6">
+<div class="grid grid-cols-1 gap-4">
+<!-- Source Folder (Select Trigger) -->
+<button class="group flex items-center justify-between p-5 bg-surface-container hover:bg-surface-container-highest transition-all duration-200 border-l-2 border-primary-container" onclick="selectSource()">
+<div class="flex flex-col items-start text-left">
+<span class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-1">Source Path</span>
+<span class="text-sm font-semibold text-on-surface truncate max-w-[200px]" id="source-path-text">/Volumes/SD_PRO/2023_SHOOTS</span>
+</div>
+<span class="material-symbols-outlined text-primary-container group-hover:translate-x-1 transition-transform" data-icon="folder_open">folder_open</span>
+</button>
+<!-- Destination Folder -->
+<button class="group flex items-center justify-between p-5 bg-surface-container hover:bg-surface-container-highest transition-all duration-200 border-l-2 border-secondary">
+<div class="flex flex-col items-start text-left">
+<span class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-1">Export Target</span>
+<span class="text-sm font-semibold text-on-surface truncate max-w-[200px]">/Users/BigBadPhotos/Final_Edits</span>
+</div>
+<span class="material-symbols-outlined text-secondary group-hover:translate-x-1 transition-transform" data-icon="drive_file_move">drive_file_move</span>
+</button>
+</div>
+<!-- Stats/Context -->
+<div class="flex justify-between items-start pt-4">
+<div class="space-y-1">
+<p class="text-[10px] font-bold text-secondary uppercase tracking-widest">Detected Assets</p>
+<p class="text-4xl font-black text-on-surface tracking-tighter">1,402<span class="text-primary-container text-sm ml-1">RAW</span></p>
+</div>
+<div class="bg-surface-container-highest p-4 flex flex-col items-end">
+<p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-2">Workspace Load</p>
+<div class="w-24 h-1 bg-surface-container-low">
+<div class="w-[65%] h-full bg-primary-container"></div>
+</div>
+<p class="text-[10px] font-bold text-on-surface mt-1">65% OPTIMIZED</p>
+</div>
+</div>
+<!-- Main Action -->
+<button class="w-full bg-primary-container py-6 flex items-center justify-center gap-3 active:scale-[0.98] active:brightness-125 transition-all duration-100 group relative overflow-hidden">
+<span class="text-on-primary-container font-black tracking-[0.2em] uppercase text-sm relative z-10">BEGIN REVIEW</span>
+<span class="material-symbols-outlined text-on-primary-container relative z-10 group-hover:translate-x-2 transition-transform" data-icon="play_arrow">play_arrow</span>
+<div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+</button>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 border-t border-[#353534]/20 bg-[#131313] flex justify-around items-center h-20 pb-safe">
+<a class="flex flex-col items-center justify-center text-[#9ccee2]/50 hover:text-[#a4e6ff] active:brightness-125 transition-all font-manrope text-[10px] uppercase font-bold tracking-widest" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="grid_view">grid_view</span>
+<span>LIBRARY</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9ccee2]/50 hover:text-[#a4e6ff] active:brightness-125 transition-all font-manrope text-[10px] uppercase font-bold tracking-widest" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="tune">tune</span>
+<span>DEVELOP</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#00d1ff] font-black font-manrope text-[10px] uppercase tracking-widest" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="visibility" style="font-variation-settings: 'FILL' 1;">visibility</span>
+<span>REVIEW</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#9ccee2]/50 hover:text-[#a4e6ff] active:brightness-125 transition-all font-manrope text-[10px] uppercase font-bold tracking-widest" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="ios_share">ios_share</span>
+<span>EXPORT</span>
+</a>
+</nav>
+<script>
+        function selectSource() {
+            // State representation for when a source directory is selected
+            const img = document.getElementById('hero-image');
+            const filename = document.getElementById('hero-filename');
+            const pathText = document.getElementById('source-path-text');
+            
+            // Replacing the eagle image with a new placeholder image
+            img.src = "https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?auto=format&fit=crop&q=80&w=1000";
+            img.alt = "New Asset Preview";
+            
+            // Displaying the filename of the new image
+            filename.textContent = "COSMOS_SEQUENCE_092.RAW";
+            
+            // Optional: Update path to show selection effect
+            pathText.textContent = "/Volumes/SD_PRO/2023_SHOOTS/NEBULA_SESSION";
+            pathText.classList.add('text-primary-container');
+        }
+    </script>
+</body></html>

@@ -43,7 +43,7 @@ export function useExporter() {
   const [exportDone, setExportDone] = useState(false)
   const [failedFiles, setFailedFiles] = useState([])
 
-  const startExport = useCallback(async ({ fileFormat = 'original', includeMaybes = false } = {}) => {
+  const startExport = useCallback(async ({ fileFormat = 'original', includeMaybes = false, newFolderName = '' } = {}) => {
     const queue = Object.values(photos).filter(p =>
       p.file && (p.decision === 'keep' || (includeMaybes && p.decision === 'maybe'))
     )
@@ -67,6 +67,22 @@ export function useExporter() {
     setExportTotal(queue.length)
 
     const failed = []
+    const keeps = Object.values(photos).filter(p => p.decision === 'keep').map(p => p.filename)
+    const maybes = Object.values(photos).filter(p => p.decision === 'maybe').map(p => p.filename)
+    const rejects = Object.values(photos).filter(p => p.decision === 'reject').map(p => p.filename)
+    const decisions = {}
+    for (const p of Object.values(photos)) {
+      if (p.decision) decisions[p.filename] = p.decision
+    }
+    const decisionsPayload = {
+      schema: 'bigbadphotos.decisions.v1',
+      exported_at: new Date().toISOString(),
+      include_maybes: !!includeMaybes,
+      keeps,
+      maybes,
+      rejects,
+      decisions,
+    }
 
     if (!HAS_DIR_PICKER) {
       // iOS path: try Web Share API first, fall back to sequential downloads
@@ -91,13 +107,30 @@ export function useExporter() {
             setExportedCount(i + 1)
           }
         }
+
+        // Also export the decisions JSON for downstream automation.
+        await triggerDownload(
+          new Blob([JSON.stringify(decisionsPayload, null, 2)], { type: 'application/json' }),
+          'bigbad_decisions.json'
+        )
       } catch (err) {
         if (err.name !== 'AbortError') {
           setExportError(`Export failed: ${err.message}`)
         }
       }
     } else {
-      // Desktop path: write to chosen destination folder
+      // Desktop path: write to chosen destination folder (or a new subfolder)
+      let exportDir = destDir
+      if (newFolderName.trim()) {
+        try {
+          exportDir = await destDir.getDirectoryHandle(newFolderName.trim(), { create: true })
+        } catch (err) {
+          setExportError(`Could not create folder "${newFolderName.trim()}": ${err.message}`)
+          setExporting(false)
+          return
+        }
+      }
+
       for (let i = 0; i < queue.length; i++) {
         const photo = queue[i]
         try {
@@ -106,7 +139,7 @@ export function useExporter() {
             ? photo.filename.replace(/\.[^.]+$/, '.jpg')
             : photo.filename
           const blob = convertToJpeg ? await encodeAsJpeg(photo.file) : photo.file
-          const fileHandle = await destDir.getFileHandle(exportName, { create: true })
+          const fileHandle = await exportDir.getFileHandle(exportName, { create: true })
           const writable = await fileHandle.createWritable()
           await writable.write(blob)
           await writable.close()
@@ -115,6 +148,16 @@ export function useExporter() {
           failed.push({ filename: photo.filename, reason: err.message })
           setExportedCount(i + 1)
         }
+      }
+
+      // Write decisions JSON into export folder so BigBadPhotoAutomation can resume.
+      try {
+        const fileHandle = await exportDir.getFileHandle('bigbad_decisions.json', { create: true })
+        const writable = await fileHandle.createWritable()
+        await writable.write(new Blob([JSON.stringify(decisionsPayload, null, 2)], { type: 'application/json' }))
+        await writable.close()
+      } catch (err) {
+        failed.push({ filename: 'bigbad_decisions.json', reason: err.message })
       }
     }
 

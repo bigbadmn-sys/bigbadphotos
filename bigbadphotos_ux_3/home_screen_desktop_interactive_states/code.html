@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-container": "#8ec0d3",
+                    "secondary-container": "#184f60",
+                    "on-secondary-fixed-variant": "#154d5d",
+                    "on-background": "#e5e2e1",
+                    "secondary": "#9ccee2",
+                    "surface": "#131313",
+                    "primary-fixed-dim": "#4cd6ff",
+                    "primary-fixed": "#b7eaff",
+                    "error-container": "#93000a",
+                    "surface-dim": "#131313",
+                    "surface-container-highest": "#353534",
+                    "on-tertiary-fixed": "#291800",
+                    "on-surface-variant": "#bbc9cf",
+                    "inverse-surface": "#e5e2e1",
+                    "primary-container": "#00d1ff",
+                    "on-primary": "#003543",
+                    "surface-container-low": "#1c1b1b",
+                    "surface-container-high": "#2a2a2a",
+                    "secondary-fixed-dim": "#9ccee2",
+                    "tertiary": "#ffd59c",
+                    "primary": "#a4e6ff",
+                    "on-secondary-fixed": "#001f28",
+                    "outline": "#859399",
+                    "on-tertiary-fixed-variant": "#624000",
+                    "surface-variant": "#353534",
+                    "on-primary-fixed-variant": "#004e60",
+                    "on-secondary": "#003543",
+                    "on-primary-container": "#00566a",
+                    "secondary-fixed": "#b8eafe",
+                    "on-tertiary-container": "#6b4700",
+                    "inverse-primary": "#00677f",
+                    "outline-variant": "#3c494e",
+                    "on-error-container": "#ffdad6",
+                    "tertiary-fixed-dim": "#ffba49",
+                    "tertiary-container": "#feb127",
+                    "surface-container-lowest": "#0e0e0e",
+                    "surface-bright": "#3a3939",
+                    "on-tertiary": "#442b00",
+                    "on-primary-fixed": "#001f28",
+                    "background": "#131313",
+                    "surface-container": "#201f1f",
+                    "inverse-on-surface": "#313030",
+                    "tertiary-fixed": "#ffddb1",
+                    "on-surface": "#e5e2e1",
+                    "error": "#ffb4ab",
+                    "surface-tint": "#4cd6ff",
+                    "on-error": "#690005"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Manrope"],
+                    "label": ["Manrope"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .ghost-border {
+            border: 1px solid rgba(133, 147, 153, 0.15);
+        }
+        .obsidian-gradient {
+            background: linear-gradient(180deg, rgba(19,19,19,0) 0%, rgba(19,19,19,0.9) 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary">
+<!-- SIDE NAVIGATION -->
+<aside class="h-screen w-64 rounded-none fixed left-0 top-0 bg-[#0e0e0e] flex flex-col border-r border-white/5 z-50">
+<div class="px-6 py-8">
+<h1 class="text-lg font-black text-[#00D1FF] mb-1 tracking-tighter">BIGBADPHOTOS</h1>
+<p class="font-manrope font-semibold text-[11px] tracking-[0.1em] uppercase text-stone-500">OBSIDIAN LENS V1.0</p>
+</div>
+<nav class="flex-1 mt-4">
+<div class="flex flex-col">
+<!-- Workspace (Active) -->
+<a class="bg-[#201f1f] text-[#00D1FF] border-l-2 border-[#00D1FF] py-4 px-6 flex items-center gap-4 transition-all cursor-crosshair font-manrope font-semibold text-[11px] tracking-[0.1em] uppercase" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+<span>Library</span>
+</a>
+<a class="text-stone-500 py-4 px-6 flex items-center gap-4 hover:text-white hover:bg-[#201f1f] transition-all cursor-crosshair font-manrope font-semibold text-[11px] tracking-[0.1em] uppercase" href="#">
+<span class="material-symbols-outlined">collections</span>
+<span>Cull</span>
+</a>
+<a class="text-stone-500 py-4 px-6 flex items-center gap-4 hover:text-white hover:bg-[#201f1f] transition-all cursor-crosshair font-manrope font-semibold text-[11px] tracking-[0.1em] uppercase" href="#">
+<span class="material-symbols-outlined">compare</span>
+<span>Compare</span>
+</a>
+<a class="text-stone-500 py-4 px-6 flex items-center gap-4 hover:text-white hover:bg-[#201f1f] transition-all cursor-crosshair font-manrope font-semibold text-[11px] tracking-[0.1em] uppercase" href="#">
+<span class="material-symbols-outlined">ios_share</span>
+<span>Export</span>
+</a>
+<a class="text-stone-500 py-4 px-6 flex items-center gap-4 hover:text-white hover:bg-[#201f1f] transition-all cursor-crosshair font-manrope font-semibold text-[11px] tracking-[0.1em] uppercase" href="#">
+<span class="material-symbols-outlined">tune</span>
+<span>Preferences</span>
+</a>
+</div>
+</nav>
+<div class="px-6 mb-8">
+<button class="w-full bg-primary-container text-on-primary py-3 font-bold text-[11px] tracking-widest uppercase hover:brightness-110 transition-all active:scale-[0.98]">
+            NEW IMPORT
+        </button>
+</div>
+<div class="border-t border-white/5 py-4">
+<a class="text-stone-500 py-3 px-6 flex items-center gap-4 hover:text-white transition-all text-[10px] tracking-widest uppercase" href="#">
+<span class="material-symbols-outlined text-lg">help_outline</span>
+<span>Support</span>
+</a>
+<a class="text-stone-500 py-3 px-6 flex items-center gap-4 hover:text-white transition-all text-[10px] tracking-widest uppercase" href="#">
+<span class="material-symbols-outlined text-lg">sensors</span>
+<span>System Status</span>
+</a>
+</div>
+</aside>
+<!-- MAIN CONTENT CANVAS -->
+<main class="ml-64 min-h-screen flex flex-col">
+<!-- TOP APP BAR -->
+<header class="flex justify-between items-center w-full px-8 py-6 sticky top-0 bg-[#131313]/80 backdrop-blur-xl z-40">
+<div class="flex items-center gap-12">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold tracking-[0.2em] text-[#00D1FF] uppercase">CURRENT MODULE</span>
+<span class="text-xl font-black italic tracking-tighter text-[#00D1FF] font-manrope uppercase">IMPORT_FLOW</span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex flex-col items-end">
+<span class="text-[10px] font-bold tracking-[0.2em] text-stone-500 uppercase">WORKSPACE STATUS</span>
+<span class="text-xs font-mono text-primary">STABLE // 1,402 RAW ASSETS</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-[#353534] transition-colors text-stone-400 active:scale-95">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 hover:bg-[#353534] transition-colors text-stone-400 active:scale-95">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- DASHBOARD CONTAINER -->
+<section class="p-8 flex-1 grid grid-cols-12 gap-8 max-w-[1600px] mx-auto w-full">
+<!-- HERO AREA: THE EAGLE (Updated with selected state logic) -->
+<div class="col-span-12 lg:col-span-8 relative aspect-[16/9] bg-surface-container-lowest overflow-hidden group">
+<!-- Default Image: Eagle {{DATA:IMAGE:IMAGE_20}} -->
+<img alt="Close-up of a bald eagle head" class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-1000 grayscale-[0.3]" src="https://lh3.googleusercontent.com/aida/ADBb0uhvPGridYGS6yTGT2Ou07xRtftJaRNuWT3uzE9rbEcjkkMkddW0B3-UHBm4_N_uGj1PmhTtlPfVCaqrqZgPZZuR-d8LIXIrxMQYX9FNwGC5wG3utE6ajJUMhsrhwlNg9f52vTlodTny9HAvcW14vYnPnSxMdJXtjpyCXQwevFR6PpZjdq3BxVqxmJ71K-CNJ1_CjnZmDGctH-VnNjhXx4RV8kQreikZgWmmX-FkYvkKuke6tEH7lHieYkbD-BYB-t8xW5atbZkX6w"/>
+<div class="absolute inset-0 obsidian-gradient pointer-events-none"></div>
+<!-- HERO OVERLAY (No white text overlays on image content) -->
+<div class="absolute bottom-0 left-0 p-10 w-full flex justify-between items-end">
+<div>
+<div class="flex items-center gap-3">
+<span class="px-2 py-1 bg-primary-container text-on-primary text-[10px] font-bold tracking-tighter uppercase">LATEST INGEST</span>
+<span class="text-stone-400 text-[10px] font-mono tracking-tighter uppercase">IMG_8842_RAW</span>
+</div>
+</div>
+<div class="flex flex-col items-end text-right">
+<div class="flex gap-4">
+<div class="flex flex-col">
+<span class="text-[10px] text-stone-500 font-bold uppercase">ISO</span>
+<span class="text-secondary font-mono text-sm">400</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[10px] text-stone-500 font-bold uppercase">SHUTTER</span>
+<span class="text-secondary font-mono text-sm">1/4000</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[10px] text-stone-500 font-bold uppercase">F-STOP</span>
+<span class="text-secondary font-mono text-sm">f/5.6</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- CONTROLS PANEL -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+<!-- SOURCE PATH CARD -->
+<div class="bg-surface-container p-8 flex flex-col gap-6 relative">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#00D1FF]">folder_open</span>
+<h3 class="text-[11px] font-black tracking-[0.2em] uppercase text-stone-400">SOURCE_DIRECTORY</h3>
+</div>
+<div class="space-y-4">
+<div class="group cursor-crosshair">
+<label class="text-[10px] text-stone-500 font-bold uppercase mb-2 block">PATH_INPUT</label>
+<div class="flex items-center border-b border-stone-800 group-hover:border-primary-container transition-colors py-2">
+<span class="text-sm font-mono text-on-surface flex-1 truncate">/VOLUMES/RED_SATA_01/DCIM/PROJECT_EAGLE</span>
+<button class="text-primary-container hover:text-white">
+<span class="material-symbols-outlined">edit</span>
+</button>
+</div>
+</div>
+<div class="flex justify-between items-center py-4 bg-surface-container-lowest px-4 border border-primary-container/20">
+<span class="text-[10px] font-bold text-stone-500 uppercase">ACTIVE_SELECTION</span>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></div>
+<span class="text-xs font-mono text-primary">IMG_8843_RAW.DNG</span>
+</div>
+</div>
+</div>
+</div>
+<!-- EXPORT TARGET CARD -->
+<div class="bg-surface-container p-8 flex flex-col gap-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary">output</span>
+<h3 class="text-[11px] font-black tracking-[0.2em] uppercase text-stone-400">EXPORT_TARGET</h3>
+</div>
+<div class="group cursor-crosshair">
+<label class="text-[10px] text-stone-500 font-bold uppercase mb-2 block">DESTINATION_MOUNT</label>
+<div class="flex items-center border-b border-stone-800 group-hover:border-secondary transition-colors py-2">
+<span class="text-sm font-mono text-on-surface flex-1 truncate">/USERS/CURATOR/PRODUCTION/2024_FINALS</span>
+<button class="text-secondary hover:text-white">
+<span class="material-symbols-outlined">folder_shared</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-lowest p-3">
+<span class="text-[9px] text-stone-500 block font-bold uppercase mb-1">FORMAT</span>
+<span class="text-xs font-mono">DNG_LOSSLESS</span>
+</div>
+<div class="bg-surface-container-lowest p-3">
+<span class="text-[9px] text-stone-500 block font-bold uppercase mb-1">BIT_DEPTH</span>
+<span class="text-xs font-mono">16-BIT</span>
+</div>
+</div>
+</div>
+<!-- MAIN CTA -->
+<button class="mt-auto group relative w-full bg-primary-container py-6 flex items-center justify-center gap-4 transition-all hover:brightness-110 active:scale-[0.98]">
+<span class="text-on-primary font-black text-lg tracking-widest uppercase">BEGIN REVIEW</span>
+<span class="material-symbols-outlined text-on-primary font-bold group-hover:translate-x-2 transition-transform">arrow_forward_ios</span>
+</button>
+</div>
+<!-- LOWER TECHNICAL DATA ROW -->
+<div class="col-span-12 grid grid-cols-1 md:grid-cols-4 gap-6 mt-4">
+<div class="bg-surface-container-lowest border border-white/5 p-6 flex flex-col">
+<span class="text-[10px] font-bold text-stone-500 uppercase mb-4">STORAGE_AVAILABILITY</span>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-black text-on-surface tracking-tighter">4.2</span>
+<span class="text-xs font-bold text-stone-500 uppercase">TERABYTES</span>
+</div>
+<div class="w-full bg-surface-container h-1 mt-4">
+<div class="bg-primary-container h-full w-[65%]"></div>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-white/5 p-6 flex flex-col">
+<span class="text-[10px] font-bold text-stone-500 uppercase mb-4">INGEST_VELOCITY</span>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-black text-on-surface tracking-tighter">840</span>
+<span class="text-xs font-bold text-stone-500 uppercase">MB/SEC</span>
+</div>
+<span class="text-[10px] text-primary mt-4 font-mono uppercase tracking-tighter">PEAK PERFORMANCE REACHED</span>
+</div>
+<div class="bg-surface-container-lowest border border-white/5 p-6 flex flex-col">
+<span class="text-[10px] font-bold text-stone-500 uppercase mb-4">PENDING_METADATA</span>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-black text-on-surface tracking-tighter">0.00%</span>
+<span class="text-xs font-bold text-stone-500 uppercase">LATENCY</span>
+</div>
+<span class="text-[10px] text-stone-500 mt-4 font-mono uppercase tracking-tighter">SYMBOLS_MAPPED_OK</span>
+</div>
+<div class="bg-surface-container-lowest border border-white/5 p-6 flex flex-col">
+<span class="text-[10px] font-bold text-stone-500 uppercase mb-4">SYSTEM_TEMP</span>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-black text-[#ffd59c] tracking-tighter">32°C</span>
+<span class="text-xs font-bold text-stone-500 uppercase">NOMINAL</span>
+</div>
+<div class="flex gap-1 mt-4">
+<div class="h-1 flex-1 bg-primary-container/20"></div>
+<div class="h-1 flex-1 bg-primary-container/20"></div>
+<div class="h-1 flex-1 bg-stone-700"></div>
+<div class="h-1 flex-1 bg-stone-700"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- FOOTER BAR -->
+<footer class="mt-auto px-8 py-4 bg-[#0e0e0e] flex justify-between items-center text-[10px] text-stone-600 font-bold tracking-[0.2em] uppercase">
+<div>
+            LICENSED TO: PROFESSIONAL_CURATOR_99
+        </div>
+<div class="flex gap-8">
+<span class="text-stone-400">ENCRYPTION: AES-256</span>
+<span class="text-primary">CORE_SYNC_ACTIVE</span>
+</div>
+</footer>
+</main>
+</body></html>

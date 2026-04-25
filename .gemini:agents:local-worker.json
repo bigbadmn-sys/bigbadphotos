@@ -1,0 +1,7 @@
+{
+  "name": "local-worker",
+  "description": "Local Qwen-14B worker for boilerplate and unit tests.",
+  "endpoint": "http://localhost:8080/mcp",
+  "type": "sse",
+  "capabilities": ["file_read", "file_write", "code_generation"]
+}
