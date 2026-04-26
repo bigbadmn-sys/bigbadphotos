@@ -90,6 +90,7 @@ export default function ReviewExportView() {
 
   const [includeMaybes, setIncludeMaybes] = useState(false)
   const [fileFormat, setFileFormat] = useState('original')
+  const [newFolderName, setNewFolderName] = useState('')
 
   const {
     exporting, exportedCount, exportTotal,
@@ -112,7 +113,7 @@ export default function ReviewExportView() {
     }
   }
 
-  const handleExport = () => startExport({ fileFormat, includeMaybes })
+  const handleExport = () => startExport({ fileFormat, includeMaybes, newFolderName })
 
   return (
     <div className="flex h-full overflow-hidden">
@@ -240,6 +241,25 @@ export default function ReviewExportView() {
               <span className="material-symbols-outlined text-primary/60" style={{ fontSize: '18px', fontVariationSettings: "'FILL' 1" }}>ios_share</span>
               <span className="text-on-surface-variant text-xs flex-1">Files will be shared via iOS Share Sheet</span>
             </div>
+          </div>
+        )}
+
+        {/* New subfolder */}
+        {HAS_DIR_PICKER && (
+          <div className="p-6 border-b border-outline-variant/20">
+            <p className="text-on-surface-variant tracking-widest mb-3" style={{ fontSize: '9px', fontWeight: 600 }}>NEW SUBFOLDER <span className="opacity-50">(OPTIONAL)</span></p>
+            <input
+              type="text"
+              value={newFolderName}
+              onChange={e => setNewFolderName(e.target.value)}
+              placeholder="e.g. Wedding Selects"
+              className="w-full bg-surface-container border border-outline-variant/20 px-3 py-2.5 text-on-surface text-xs tracking-wider placeholder:text-on-surface-variant/30 focus:outline-none focus:border-primary/50"
+            />
+            {newFolderName.trim() && (
+              <p className="text-primary/60 tracking-wider mt-2" style={{ fontSize: '8px' }}>
+                FILES WILL BE WRITTEN TO /{newFolderName.trim()}
+              </p>
+            )}
           </div>
         )}
 
