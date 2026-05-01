@@ -2,6 +2,10 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID
 
+async function sleep(ms) {
+  await new Promise(resolve => setTimeout(resolve, ms))
+}
+
 function loadGis() {
   return new Promise((resolve, reject) => {
     if (window.google?.accounts?.id) return resolve()
@@ -24,11 +28,29 @@ function loadGis() {
   })
 }
 
+async function waitForBackend({ maxMs = 60000, intervalMs = 1500 } = {}) {
+  const started = Date.now()
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    try {
+      const res = await fetch('/health', { cache: 'no-store' })
+      if (res.ok) return { ok: true, elapsedMs: Date.now() - started }
+    } catch {
+      // ignore and retry
+    }
+
+    const elapsed = Date.now() - started
+    if (elapsed >= maxMs) return { ok: false, elapsedMs: elapsed }
+    await sleep(intervalMs)
+  }
+}
+
 export default function GoogleGate({ children }) {
   // null = loading; false = not authenticated
   const [user, setUser] = useState(null)
   const [checking, setChecking] = useState(true)
   const [error, setError] = useState(null)
+  const [backend, setBackend] = useState({ warming: false, ok: null })
 
   const canShowSignin = useMemo(() => user === false, [user])
 
@@ -61,6 +83,20 @@ export default function GoogleGate({ children }) {
   useEffect(() => {
     let cancelled = false
 
+    const warmupTimer = setTimeout(() => {
+      if (!cancelled) setBackend({ warming: true, ok: null })
+    }, 800)
+
+    waitForBackend({ maxMs: 60000, intervalMs: 1500 })
+      .then((r) => {
+        if (cancelled) return
+        setBackend({ warming: false, ok: r.ok })
+      })
+      .catch(() => {
+        if (cancelled) return
+        setBackend({ warming: false, ok: false })
+      })
+
     fetch('/auth/me')
       .then(r => (r.ok ? r.json() : Promise.reject(new Error('not_authed'))))
       .then(data => {
@@ -73,7 +109,10 @@ export default function GoogleGate({ children }) {
         if (!cancelled) setChecking(false)
       })
 
-    return () => { cancelled = true }
+    return () => {
+      cancelled = true
+      clearTimeout(warmupTimer)
+    }
   }, [])
 
   // Initialize GIS when not authenticated
@@ -124,7 +163,7 @@ export default function GoogleGate({ children }) {
             BIGBADPHOTOS
           </h1>
           <p className="text-on-surface-variant text-sm mt-2 tracking-wider">
-            AUTHENTICATING…
+            {backend.warming ? 'WAKING SERVER…' : 'AUTHENTICATING…'}
           </p>
         </div>
       </div>
