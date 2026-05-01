@@ -11,6 +11,9 @@ jobs:
   sonarqube:
     name: SonarQube Scan
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -21,3 +24,67 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+      - name: Collect SonarCloud Security Hotspots (PR)
+        if: always() && github.event_name == 'pull_request'
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+
+          PROJECT_KEY="$(grep '^sonar.projectKey=' sonar-project.properties | cut -d= -f2)"
+
+          echo "## SonarCloud Security Hotspots (PR #${PR_NUMBER})" > sonar_report.md
+          echo "" >> sonar_report.md
+          echo "- Project: \`${PROJECT_KEY}\`" >> sonar_report.md
+          echo "- PR: #${PR_NUMBER}" >> sonar_report.md
+          echo "" >> sonar_report.md
+
+          curl -sS -u "${SONAR_TOKEN}:" \
+            "${SONAR_HOST_URL}/api/issues/search?componentKeys=${PROJECT_KEY}&pullRequest=${PR_NUMBER}&types=SECURITY_HOTSPOT&ps=50" \
+            > sonar_hotspots.json
+
+          python - <<'PY'
+          import json
+
+          data = json.load(open("sonar_hotspots.json", "r", encoding="utf-8"))
+          issues = data.get("issues", []) or []
+
+          lines = []
+          if not issues:
+              lines.append("✅ No Security Hotspots reported on this PR.")
+          else:
+              lines.append(f"❌ **{len(issues)} Security Hotspot(s)** reported on this PR:")
+              lines.append("")
+              for i, iss in enumerate(issues[:10], 1):
+                  rule = iss.get("rule", "unknown-rule")
+                  comp = iss.get("component", "unknown-file")
+                  line = iss.get("line")
+                  msg  = (iss.get("message") or "").strip().replace("\n", " ")
+                  loc = f"`{comp}`" + (f":{line}" if line else "")
+                  lines.append(f"{i}. {loc} — **{rule}** — {msg}")
+              if len(issues) > 10:
+                  lines.append("")
+                  lines.append(f"_Showing 10 of {len(issues)}._")
+
+          with open("sonar_report.md", "a", encoding="utf-8") as f:
+              f.write("\n".join(lines) + "\n")
+          PY
+
+          cat sonar_report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Comment SonarCloud Hotspots on PR
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('sonar_report.md', 'utf8');
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body,
+            });
