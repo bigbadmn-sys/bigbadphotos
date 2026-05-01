@@ -1,37 +1,101 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, session
 from flask_cors import CORS
+from google.oauth2 import id_token as google_id_token
+from google.auth.transport import requests as google_requests
 import cv2
 import numpy as np
 import json
 import os
 import time
 import gc
+import secrets
+from datetime import timedelta
 from typing import Dict, List, Tuple
 
 app = Flask(__name__)
 CORS(app)
 
 FRONTEND_DIST = os.path.join(os.path.dirname(__file__), 'frontend', 'dist')
-BBP_PASSWORD  = os.environ.get('BBP_PASSWORD', '')
 
+app.secret_key = os.environ.get('FLASK_SECRET_KEY', secrets.token_hex(32))
+IS_DEBUG = (os.environ.get('FLASK_DEBUG') == '1') or (os.environ.get('BBP_DEBUG') == '1')
+app.config.update(
+    SESSION_COOKIE_SECURE=not IS_DEBUG,
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE='Lax',
+    PERMANENT_SESSION_LIFETIME=timedelta(days=7),
+)
 
-def check_auth():
-    """Return True if password auth is satisfied (or no password is set)."""
-    if not BBP_PASSWORD:
-        return True
-    auth = request.authorization
-    return auth is not None and auth.password == BBP_PASSWORD
+if not IS_DEBUG:
+    from werkzeug.middleware.proxy_fix import ProxyFix
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
+
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
+ALLOWED_EMAILS = set(
+    e.strip().lower()
+    for e in os.environ.get('BBP_ALLOWED_EMAILS', '').split(',')
+    if e.strip()
+)
+
+if not ALLOWED_EMAILS:
+    print("⚠️  BBP_ALLOWED_EMAILS is empty — all logins will be rejected")
 
 
 API_ROUTES = {'/analyze', '/rank'}
 
 @app.before_request
 def enforce_auth():
-    # Only enforce auth on API routes — the React app handles its own password gate
     if request.path not in API_ROUTES:
-        return
-    if not check_auth():
-        return ('Unauthorized', 401, {'WWW-Authenticate': 'Basic realm="BigBadPhotos"'})
+        return  # static files, /health, /auth/* all pass through
+    if not session.get('user'):
+        return jsonify({'error': 'not_authenticated'}), 401
+
+
+@app.post('/auth/google')
+def auth_google():
+    """Verify Google ID token, create session if email is allowed."""
+    data = request.get_json(silent=True) or {}
+    credential = data.get('credential')
+    if not credential:
+        return jsonify({'error': 'missing_credential'}), 400
+
+    try:
+        idinfo = google_id_token.verify_oauth2_token(
+            credential,
+            google_requests.Request(),
+            GOOGLE_CLIENT_ID,
+        )
+    except ValueError as e:
+        return jsonify({'error': 'invalid_token', 'detail': str(e)}), 401
+
+    email = (idinfo.get('email') or '').lower()
+    if email not in ALLOWED_EMAILS:
+        return jsonify({'error': 'unauthorized_email', 'email': email}), 403
+
+    session['user'] = {
+        'email': email,
+        'name': idinfo.get('name', ''),
+        'picture': idinfo.get('picture', ''),
+        'sub': idinfo.get('sub', ''),
+    }
+    session.permanent = True
+
+    return jsonify({'ok': True, 'user': session['user']})
+
+
+@app.post('/auth/logout')
+def auth_logout():
+    session.clear()
+    return jsonify({'ok': True})
+
+
+@app.get('/auth/me')
+def auth_me():
+    """Check current session. Frontend calls this on load."""
+    user = session.get('user')
+    if not user:
+        return jsonify({'authenticated': False}), 401
+    return jsonify({'authenticated': True, 'user': user})
 
 
 @app.route('/', defaults={'path': ''})
@@ -512,4 +576,4 @@ if __name__ == "__main__":
 
     hostname = os.environ.get('BBP_HOSTNAME', '0.0.0.0')
     print(f"Starting BigBadPhotos on {scheme}://{hostname}:{port}")
-    app.run(debug=False, host='0.0.0.0', port=port, ssl_context=ssl_context)
+    app.run(debug=IS_DEBUG, host='0.0.0.0', port=port, ssl_context=ssl_context)
