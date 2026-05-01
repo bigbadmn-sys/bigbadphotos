@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify, send_from_directory, session
-from flask_cors import CORS
 from google.oauth2 import id_token as google_id_token
 from google.auth.transport import requests as google_requests
 import cv2
@@ -13,7 +12,6 @@ from datetime import timedelta
 from typing import Dict, List, Tuple
 
 app = Flask(__name__)
-CORS(app)
 
 FRONTEND_DIST = os.path.join(os.path.dirname(__file__), 'frontend', 'dist')
 
