@@ -14,6 +14,17 @@ export default function TopAppBar() {
       ? `STABLE // ${photoCount.toLocaleString()} ${rawCount > 0 ? 'RAW' : 'IMG'} ASSETS`
       : 'AWAITING SOURCE FOLDER'
 
+  const handleLogout = async () => {
+    try {
+      await fetch('/auth/logout', { method: 'POST' })
+    } finally {
+      if (window.google?.accounts?.id) {
+        window.google.accounts.id.disableAutoSelect()
+      }
+      window.location.reload()
+    }
+  }
+
   return (
     <header className="hidden md:flex justify-between items-center w-full px-8 h-16 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/10 sticky top-0 z-40 shrink-0">
 
@@ -36,6 +47,13 @@ export default function TopAppBar() {
           </button>
           <button className="p-2 hover:bg-surface-container transition-colors text-on-surface-variant/60 active:scale-95">
             <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>account_circle</span>
+          </button>
+          <button
+            onClick={handleLogout}
+            className="p-2 hover:bg-surface-container transition-colors text-on-surface-variant/60 active:scale-95"
+            title="Sign out"
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>logout</span>
           </button>
         </div>
       </div>
