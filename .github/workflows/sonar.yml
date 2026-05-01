@@ -43,31 +43,33 @@ jobs:
           echo "" >> sonar_report.md
 
           curl -sS -u "${SONAR_TOKEN}:" \
-            "${SONAR_HOST_URL}/api/issues/search?componentKeys=${PROJECT_KEY}&pullRequest=${PR_NUMBER}&types=SECURITY_HOTSPOT&ps=50" \
+            "${SONAR_HOST_URL}/api/hotspots/search?projectKey=${PROJECT_KEY}&pullRequest=${PR_NUMBER}&ps=50" \
             > sonar_hotspots.json
 
           python - <<'PY'
           import json
 
           data = json.load(open("sonar_hotspots.json", "r", encoding="utf-8"))
-          issues = data.get("issues", []) or []
+          hotspots = data.get("hotspots", []) or []
 
           lines = []
-          if not issues:
+          if not hotspots:
               lines.append("✅ No Security Hotspots reported on this PR.")
           else:
-              lines.append(f"❌ **{len(issues)} Security Hotspot(s)** reported on this PR:")
+              lines.append(f"❌ **{len(hotspots)} Security Hotspot(s)** reported on this PR:")
               lines.append("")
-              for i, iss in enumerate(issues[:10], 1):
-                  rule = iss.get("rule", "unknown-rule")
-                  comp = iss.get("component", "unknown-file")
-                  line = iss.get("line")
-                  msg  = (iss.get("message") or "").strip().replace("\n", " ")
+              for i, hs in enumerate(hotspots[:10], 1):
+                  rule = hs.get("ruleKey", "unknown-rule")
+                  comp = hs.get("component", "unknown-file")
+                  line = hs.get("line")
+                  msg  = (hs.get("message") or "").strip().replace("\n", " ")
+                  key  = hs.get("key")
                   loc = f"`{comp}`" + (f":{line}" if line else "")
-                  lines.append(f"{i}. {loc} — **{rule}** — {msg}")
-              if len(issues) > 10:
+                  suffix = f" (`{key}`)" if key else ""
+                  lines.append(f"{i}. {loc} — **{rule}** — {msg}{suffix}")
+              if len(hotspots) > 10:
                   lines.append("")
-                  lines.append(f"_Showing 10 of {len(issues)}._")
+                  lines.append(f"_Showing 10 of {len(hotspots)}._")
 
           with open("sonar_report.md", "a", encoding="utf-8") as f:
               f.write("\n".join(lines) + "\n")
