@@ -119,7 +119,7 @@ export default function GoogleGate({ children }) {
   useEffect(() => {
     if (!canShowSignin) return
     if (!CLIENT_ID) {
-      setError('Missing VITE_GOOGLE_CLIENT_ID. Set it in frontend/.env.local.')
+      setError('Missing VITE_GOOGLE_CLIENT_ID (set it in frontend/.env.local).')
       return
     }
 
