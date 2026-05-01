@@ -1,0 +1,16 @@
+name: build
+
+on:
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build placeholder
+        run: |
+          echo "Build check placeholder."
+          echo "Add real build steps (frontend/backend) when ready."
