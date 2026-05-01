@@ -8,7 +8,7 @@ import ReviewExportView from './views/ReviewExportView'
 import Sidebar from './components/Sidebar'
 import TopAppBar from './components/TopAppBar'
 import BottomNavBar from './components/BottomNavBar'
-import PasswordGate from './components/PasswordGate'
+import GoogleGate from './components/GoogleGate'
 
 function AppContent() {
   const sourceDir = useStore(state => state.sourceDir)
@@ -45,10 +45,10 @@ function AppContent() {
 
 export default function App() {
   return (
-    <PasswordGate>
+    <GoogleGate>
       <Router>
         <AppContent />
       </Router>
-    </PasswordGate>
+    </GoogleGate>
   )
 }

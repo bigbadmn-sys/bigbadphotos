@@ -10,6 +10,7 @@ export default defineConfig({
       '/health':  'http://localhost:8002',
       '/analyze': 'http://localhost:8002',
       '/rank':    'http://localhost:8002',
+      '/auth':    'http://localhost:8002',
     },
   },
   build: {
