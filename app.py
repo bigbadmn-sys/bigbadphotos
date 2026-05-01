@@ -29,11 +29,11 @@ if not IS_DEBUG:
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
 
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
-ALLOWED_EMAILS = set(
+ALLOWED_EMAILS = {
     e.strip().lower()
     for e in os.environ.get('BBP_ALLOWED_EMAILS', '').split(',')
     if e.strip()
-)
+}
 
 if not ALLOWED_EMAILS:
     print("⚠️  BBP_ALLOWED_EMAILS is empty — all logins will be rejected")
@@ -572,6 +572,6 @@ if __name__ == "__main__":
     port = 8443 if ssl_context else int(os.environ.get('PORT') or os.environ.get('BBP_PORT', '8001'))
     scheme = 'https' if ssl_context else 'http'
 
-    hostname = os.environ.get('BBP_HOSTNAME', '0.0.0.0')
+    hostname = os.environ.get('BBP_HOSTNAME', '127.0.0.1')
     print(f"Starting BigBadPhotos on {scheme}://{hostname}:{port}")
-    app.run(debug=IS_DEBUG, host='0.0.0.0', port=port, ssl_context=ssl_context)
+    app.run(debug=IS_DEBUG, host=hostname, port=port, ssl_context=ssl_context)
