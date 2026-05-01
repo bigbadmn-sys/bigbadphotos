@@ -32,7 +32,7 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          set -euo pipefail
+          set -u
 
           PROJECT_KEY="$(grep '^sonar.projectKey=' sonar-project.properties | cut -d= -f2)"
 
@@ -42,18 +42,42 @@ jobs:
           echo "- PR: #${PR_NUMBER}" >> sonar_report.md
           echo "" >> sonar_report.md
 
-          curl -sS -u "${SONAR_TOKEN}:" \
-            "${SONAR_HOST_URL}/api/hotspots/search?projectKey=${PROJECT_KEY}&pullRequest=${PR_NUMBER}&ps=50" \
-            > sonar_hotspots.json
+          # SonarCloud hotpots are not returned by /api/issues/search; use /api/hotspots/search.
+          # Don't fail the whole job if this fetch fails; we still want a comment.
+          HOTSPOTS_URL="${SONAR_HOST_URL}/api/hotspots/search?projectKey=${PROJECT_KEY}&pullRequest=${PR_NUMBER}&ps=50"
+          echo "- Hotspots API: \`${HOTSPOTS_URL}\`" >> sonar_report.md
+          echo "" >> sonar_report.md
+
+          http_code="$(
+            curl -sS -u "${SONAR_TOKEN}:" -o sonar_hotspots.json -w "%{http_code}" \
+              "${HOTSPOTS_URL}" || true
+          )"
+          echo "- Hotspots API HTTP: \`${http_code}\`" >> sonar_report.md
+          echo "" >> sonar_report.md
 
           python - <<'PY'
           import json
+          import pathlib
 
-          data = json.load(open("sonar_hotspots.json", "r", encoding="utf-8"))
-          hotspots = data.get("hotspots", []) or []
+          p = pathlib.Path("sonar_hotspots.json")
+          raw = p.read_text(encoding="utf-8", errors="replace") if p.exists() else ""
+
+          try:
+              data = json.loads(raw) if raw.strip() else {}
+          except json.JSONDecodeError:
+              data = {"_parse_error": True, "_raw": raw[:800]}
+
+          hotspots = (data.get("hotspots") or []) if isinstance(data, dict) else []
 
           lines = []
-          if not hotspots:
+          if data.get("_parse_error"):
+              lines.append("⚠️ Unable to parse SonarCloud response as JSON.")
+              lines.append("")
+              lines.append("Response (first 800 chars):")
+              lines.append("```")
+              lines.append((data.get("_raw") or "").strip())
+              lines.append("```")
+          elif not hotspots:
               lines.append("✅ No Security Hotspots reported on this PR.")
           else:
               lines.append(f"❌ **{len(hotspots)} Security Hotspot(s)** reported on this PR:")
